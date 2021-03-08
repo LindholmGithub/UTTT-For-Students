@@ -28,7 +28,7 @@ public class FontAwesomeHelper {
                 return FontAwesomeIconFactory.get().createIcon(FontAwesomeIcon.BLACK_TIE);
             default:
                 throw new RuntimeException("PlayerId not valid");
-                
+
         }
     }
 }
