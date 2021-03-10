@@ -29,7 +29,11 @@ public class BingeDrinkingBot implements IBot{
         List<IMove> moves = state.getField().getAvailableMoves();
         //Check if there is a winning move on the field, when doMove() is executed.
         for(IMove winningMove : moves ){
-            isWinningMove(state, winningMove, BOTNAME);
+            boolean win;
+            win = isWinningMove(state, winningMove, BOTNAME);
+            if( win == true){
+                return winningMove;
+            }
         }
 
         //Find macroboard to play in
