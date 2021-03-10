@@ -19,7 +19,7 @@ public class BingeDrinkingBot implements IBot{
 
     //List of the move-strategy behind the bot
     protected int[][] moveStrat = {
-            {1, 1}, //Center
+            {1, 1},{1,1},{1,1},{1,1},{1,1}, //Center
             {0, 0}, {2, 2}, {0, 2}, {2, 0}}; //Corners ordered across
 
 
@@ -27,18 +27,17 @@ public class BingeDrinkingBot implements IBot{
     @Override
     public IMove doMove(IGameState state) {
         List<IMove> moves = state.getField().getAvailableMoves();
-        //Check if there is a winning move on the field, when doMove() is executed.
-        for(IMove winningMove : moves ){
-            boolean win;
-            win = isWinningMove(state, winningMove, BOTNAME);
-            if( win == true){
-                return winningMove;
-            }
-        }
-
         //Find macroboard to play in
         for (int[] move : moveStrat)
         {
+            //Check if there is a winning move on the field, when doMove() is executed.
+            for(IMove winningMove : moves ){
+                boolean win;
+                win = isWinningMove(state, winningMove, BOTNAME);
+                if(win){
+                    return winningMove;
+                }
+            }
             if(state.getField().getMacroboard()[move[0]][move[1]].equals(IField.AVAILABLE_FIELD))
             {
                 //find move to play
