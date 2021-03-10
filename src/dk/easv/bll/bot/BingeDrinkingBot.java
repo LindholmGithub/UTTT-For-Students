@@ -1,22 +1,58 @@
 package dk.easv.bll.bot;
 
+import dk.easv.bll.field.IField;
 import dk.easv.bll.game.IGameState;
 import dk.easv.bll.move.IMove;
-import java.util.ArrayList;
-import java.util.List;
+import dk.easv.bll.move.Move;
 
-public class BadassBot extends LocalPrioritisedListBot {
-    private static final String BOTNAME = "BadassBot";
+import java.util.List;
+import java.util.Random;
+
+/**
+ *
+ * @author Code 4: A New Code
+ */
+
+public class BingeDrinkingBot implements IBot{
+    private static final String BOTNAME = "BingeDrinkingBot";
+    private Random rand = new Random();
+
+    //List of the move-strategy behind the bot
+    protected int[][] moveStrat = {
+            {1, 1}, //Center
+            {0, 0}, {2, 2}, {0, 2}, {2, 0}}; //Corners ordered across
+
+
 
     @Override
     public IMove doMove(IGameState state) {
-        List<IMove> winMoves = getWinningMoves(state);
-        if(!winMoves.isEmpty())
-            return winMoves.get(0);
+        List<IMove> moves = state.getField().getAvailableMoves();
+        //Check if there is a winning move on the field, when doMove() is executed.
+        for(IMove winningMove : moves ){
+            isWinningMove(state, winningMove, BOTNAME);
+        }
 
-        return super.doMove(state);
+        //Find macroboard to play in
+        for (int[] move : moveStrat)
+        {
+            if(state.getField().getMacroboard()[move[0]][move[1]].equals(IField.AVAILABLE_FIELD))
+            {
+                //find move to play
+                for (int[] selectedMove : moveStrat)
+                {
+                    int x = move[0]*3 + selectedMove[0];
+                    int y = move[1]*3 + selectedMove[1];
+                    if(state.getField().getBoard()[x][y].equals(IField.EMPTY_FIELD))
+                    {
+                        return new Move(x,y);
+                    }
+                }
+            }
+        }
+
+        //NOTE: Something failed, just take the first available move I guess!
+        return moves.get(rand.nextInt(moves.size()));
     }
-
 
     private boolean isWinningMove(IGameState state, IMove move, String player){
         String[][] board = state.getField().getBoard();
@@ -67,22 +103,6 @@ public class BadassBot extends LocalPrioritisedListBot {
                 isOppositeDiagWin=false;
 
         return isColumnWin || isDiagWin || isOppositeDiagWin || isRowWin;
-    }
-
-    // Compile a list of all available winning moves
-    private List<IMove> getWinningMoves(IGameState state){
-        String player = "1";
-        if(state.getMoveNumber()%2==0)
-            player="0";
-
-        List<IMove> avail = state.getField().getAvailableMoves();
-
-        List<IMove> winningMoves = new ArrayList<>();
-        for (IMove move:avail) {
-            if(isWinningMove(state,move,player))
-                winningMoves.add(move);
-        }
-        return winningMoves;
     }
 
     @Override
